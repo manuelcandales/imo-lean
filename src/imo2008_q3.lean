@@ -3,21 +3,26 @@ Copyright (c) 2021 Manuel Candales. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Manuel Candales
 -/
-import data.int.basic
 import data.real.basic
+import data.real.sqrt
 import data.nat.prime
-import data.nat.basic
 import number_theory.primes_congruent_one
 import number_theory.quadratic_reciprocity
-import data.zmod.basic
-import data.real.sqrt
-
-open zmod
 
 /-!
 # IMO 2008 Q3
-Prove that there exist infinitely many positive integers n such that n^2+1 has a prime
-divisor which is greater than 2n + √(2n).
+Prove that there exist infinitely many positive integers `n` such that `n^2 + 1` has a prime
+divisor which is greater than `2n + √(2n)`.
+
+# Solution
+We first prove the following lemma: for every prime `p > 20`, satisfying `p ≡ 1 [MOD 4]`,
+there exists `n ∈ ℕ` such that `p ∣ n^2 + 1` and `p > 2n + √(2n)`. Then the statement of the
+problem follows from the fact that there exist infinitely many primes `p ≡ 1 [MOD 4]`.
+
+To prove the lemma, notice that `p ≡ 1 [MOD 4]` implies `∃ n ∈ ℕ` such that `n^2 ≡ -1 [MOD p]`
+and we can take this `n` such that `n ≤ p/2`. Let `k = p - 2n ≥ 0`. Then we have:
+`k^2 + 4 = (p - 2n)^2 + 4 ≣ 4n^2 + 4 ≡ 0 [MOD p]`. Then `k^2 + 4 ≥ p` and so `k ≥ √(p - 4) > 4`.
+Then `p = 2n + k ≥ 2n + √(p - 4) = 2n + √(2n + k - 4) > √(2n)` and we are done.
 -/
 
 lemma p_lemma (p : ℕ) (hpp : nat.prime p) (hp_mod_4_eq_1 : p ≡ 1 [MOD 4]) (hp_gt_20 : p > 20) :
@@ -33,7 +38,7 @@ begin
   have hnat₁ : p ∣ n^2 + 1,
   { refine int.coe_nat_dvd.mp _,
     simp only [int.nat_abs_pow_two, int.coe_nat_pow, int.coe_nat_succ, int.coe_nat_dvd.mp],
-    refine (int_coe_zmod_eq_zero_iff_dvd (m^2 + 1) p).mp _,
+    refine (zmod.int_coe_zmod_eq_zero_iff_dvd (m^2 + 1) p).mp _,
     simp only [int.cast_pow, int.cast_add, int.cast_one, zmod.coe_val_min_abs],
     rw hy, exact add_left_neg 1 },
 
